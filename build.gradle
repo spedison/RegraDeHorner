@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'br.com.spedison'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = '21'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Biblioteca de logging
+    implementation 'org.slf4j:jul-to-slf4j:2.0.9'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    // Logback: implementa SLF4J
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    // Redirecionador JUL -> SLF4J
+    implementation 'org.slf4j:jul-to-slf4j:2.0.13'
+
+
+    // Biblioteca do TomCat application server.
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.18'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.1.18'
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'br.com.spedison.Main'
+}
