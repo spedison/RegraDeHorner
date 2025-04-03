@@ -2,7 +2,9 @@ package br.com.spedison.utils;
 
 import br.com.spedison.controller.AppRun;
 import br.com.spedison.controller.Horner;
+import br.com.spedison.controller.NotFoundServlet;
 import br.com.spedison.filter.ApiKeyFilter;
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
@@ -40,11 +42,21 @@ public class ServerUtils {
         File base = new File(System.getProperty("java.io.tmpdir"));
         var ctx = tomcat.addContext(contextPath, base.getAbsolutePath());
 
-        Tomcat.addServlet(ctx, "runServlet", new AppRun(processamentoRodando));
-        ctx.addServletMappingDecoded("/run", "runServlet");
+        Context rootCtx = tomcat.addContext("", base.getAbsolutePath()); // contexto raiz
+        Tomcat.addServlet(rootCtx, "globalFallback", new NotFoundServlet());
+        rootCtx.addServletMappingDecoded("/*", "globalFallback");
 
+
+        // Adiciona Serlets
+        //1
+        Tomcat.addServlet(ctx, "runServlet", new AppRun(processamentoRodando));
+        ctx.addServletMappingDecoded("/f_run", "runServlet");
+        // 2
         Tomcat.addServlet(ctx, "runHorner", new Horner());
-        ctx.addServletMappingDecoded("/horner", "runHorner");
+        ctx.addServletMappingDecoded("/f_horner", "runHorner");
+        // 3
+        Tomcat.addServlet(ctx, "fallbackServlet", new NotFoundServlet());
+        ctx.addServletMappingDecoded("/*", "fallbackServlet");
 
         var filterDef = new FilterDef();
         filterDef.setFilter(new ApiKeyFilter());
@@ -54,7 +66,8 @@ public class ServerUtils {
 
         var filterMap = new FilterMap();
         filterMap.setFilterName("apiKeyFilter");
-        filterMap.addURLPattern("/app");
+        filterMap.addURLPattern("/f_horner");
+        filterMap.addURLPattern("/f_run");
         ctx.addFilterMap(filterMap);
 
         // Inicializa o Tomcat
@@ -88,7 +101,7 @@ public class ServerUtils {
             latch.countDown(); // Libera o await()
         }));
 
-        log.info("Servidor rodando em http://%s:%d%s/run%n".formatted(bindAddress, port, contextPath));
+        log.info("Servidor rodando em http://%s:%d%s/%n".formatted(bindAddress, port, contextPath));
 
         // Aguarda o shutdown
         latch.await();

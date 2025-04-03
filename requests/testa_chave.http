@@ -1,9 +1,9 @@
 ### POST request to example server
-POST http://localhost:8888/app/run
+POST http://localhost:8888/app/f_run
 X-API-Key:chave
 
 ###
 
 ### POST request to example server
-GET http://localhost:8888/app/horner?constantes=7,-2,3.2,-5,40.0,-5,3
+GET http://localhost:8888/app/f_horner?constantes=7,-2,3.2,-5,40.0,-5,3
 X-API-Key:chave
