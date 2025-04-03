@@ -1,5 +1,6 @@
 package br.com.spedison.controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AppRun extends HttpServlet {
@@ -15,6 +17,21 @@ public class AppRun extends HttpServlet {
 
     public AppRun(AtomicBoolean rodando) {
         this.rodando = rodando;
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        log.debug("Método chamado = " + req.getMethod());
+
+        if (req.getMethod().toUpperCase().equals("POST")) {
+            this.doPost(req, resp);
+            return;
+        }else {
+            log.error("Método não processado.");
+            resp.setContentType("text/plain;charset=UTF-8");
+            resp.getWriter().write("Metodo não processado.");
+            resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
     }
 
     @Override

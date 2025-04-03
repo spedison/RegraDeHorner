@@ -5,5 +5,5 @@ X-API-Key:chave
 ###
 
 ### POST request to example server
-GET http://localhost:8888/app/f_horner?constantes=7,-2,3.2,-5,40.0,-5,3
+POST http://localhost:8888/app/f_horner?constantes=7,-2,3.2,-5,40.0,-5,3
 X-API-Key:chave
